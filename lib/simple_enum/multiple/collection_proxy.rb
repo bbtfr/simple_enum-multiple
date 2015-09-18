@@ -1,6 +1,8 @@
 module SimpleEnum
   module Multiple
     class CollectionProxy
+      include Enumerable
+
       attr_reader :origin, :accessor
 
       def initialize(origin, accessor)
@@ -23,7 +25,7 @@ module SimpleEnum
       end
 
       alias_method :to_a, :proxy
-      delegate :inspect, :to_s, :==, to: :proxy
+      delegate :inspect, :to_s, :==, :each, to: :proxy
 
     end
   end

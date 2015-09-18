@@ -6,14 +6,16 @@ SimpleEnum::Multiple is extension of SimpleEnum, which brings multi-select enum 
 
 Add this to a model:
 ```ruby
-as_enum :tags, [:iphone, :ipad, :macbook], accessor: :join_table
+class User < ActiveRecord::Base
+  as_enum :favorites, [:iphone, :ipad, :macbook], accessor: :join_table
+end
 ```
 
-Then create the required posts_tags table using migrations:
+Then create the required `users_favorites` table using migrations:
 ```ruby
-class AddTagsColumnToPost < ActiveRecord::Migration
+class AddfavoritesColumnToUser < ActiveRecord::Migration
   def change
-    create_join_table :posts, :tags
+    create_join_table :users, :favorites
   end
 end
 ```
@@ -22,23 +24,57 @@ It will store multi-enums data in a join table, if you don't want a join table, 
 
 ```ruby
 # Migration
-add_column :posts, :tag_cds, :integer
+add_column :Users, :favorite_cds, :integer
 
 # Model
-as_enum :tags, [:iphone, :ipad, :macbook], accessor: :bitwise
+as_enum :favorites, [:iphone, :ipad, :macbook], accessor: :bitwise
 ```
 
 It will store multi-enums data in a integer column, and if you don't want SimpleEnum::Multiple manage how you store your data, you can use `multiple` accessor:
 
 ```ruby
 # Model
-# serialize :tag_cds 
-# serialize :tag_cds, YourOwnCoder 
-as_enum :tags, [:iphone, :ipad, :macbook], accessor: :multiple
+# serialize :favorite_cds 
+# serialize :favorite_cds, YourOwnCoder 
+as_enum :favorites, [:iphone, :ipad, :macbook], accessor: :multiple
 ```
 
-This accessor will not handle how the data saved in the database, so you have to use something like `serialize :tag_cds`, or implement your own [Coder](https://github.com/rails/rails/blob/master/activerecord/lib/active_record/coders/json.rb).
+This accessor will not handle how the data saved in the database, so you have to use something like `serialize :favorite_cds`, or implement your own [Coder](https://github.com/rails/rails/blob/master/activerecord/lib/active_record/coders/json.rb).
 
+
+## Working with multi-select enums
+```ruby
+class User < ActiveRecord::Base
+  as_enum :favorites, [:iphone, :ipad, :macbook], accessor: :join_table
+end
+
+jane = User.new
+jane.favorites = [:iphone, :ipad]
+jane.iphone?      # => true
+jane.ipad?        # => true
+jane.macbook?     # => false
+jane.favorites    # => [:iphone, ipad]
+jane.favorite_cds # => [0, 1]
+
+joe = User.new
+joe.iphone!       # => [:iphone]
+joe.favorites     # => [:iphone]
+joe.favorite_cds  # => [0]
+
+User.favorites                            # => #<SimpleEnum::Enum:0x0....>
+User.favorites[:iphone]                   # => [0]
+User.favorites.values_at(:iphone, :ipad)  # => [0, 1]
+User.iphones                              # => #<ActiveRecord::Relation:0x0.... [jane, joe]>
+
+# You can also do this since `favorites` returns a 
+# #<SimpleEnum::Multiple::CollectionProxy> rather than a #<Array>:
+joe = User.new
+joe.iphone!       # => [:iphone]
+joe.favorites.push :ipad
+joe.favorites     # => [:iphone, ipad]
+joe.favorite_cds  # => [0, 1]
+
+```
 
 ## License
 
