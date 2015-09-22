@@ -5,6 +5,11 @@ module MongoidSupport
     @connection ||= begin
       Mongoid.configure.connect_to("simple_enum_mongoid_test")
     end
+
+    # Disable client errors
+    Moped.logger.level = Logger::ERROR if defined?(Moped)
+    Mongo::Logger.logger.level = Logger::ERROR if defined?(Mongo)
+
     Mongoid.default_client
   end
 

@@ -35,7 +35,7 @@ module SimpleEnum
         end
 
         def scope(collection, value)
-          raise "scopes for accessor: :multiple are not supported!"
+          raise NoMethodError, "scopes for accessor: :multiple are not supported!"
         end
 
         def filter_keys(keys)

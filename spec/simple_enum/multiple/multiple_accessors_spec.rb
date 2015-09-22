@@ -162,7 +162,7 @@ describe SimpleEnum::Multiple::Accessors do
 
     context 'join_table accessor', active_record: true do
       fake_active_record(:klass) { as_enum :favorites, [:iphone, :ipad, :macbook], accessor: :join_table }
-      let(:object) { klass.create(favorites: [:iphone]) }
+      let(:object) { klass.create }
       let(:accessor) { klass.favorites_accessor }
 
       it_behaves_like 'dirty attributes on ActiveModel'

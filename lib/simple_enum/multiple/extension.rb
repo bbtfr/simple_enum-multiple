@@ -7,5 +7,3 @@ module SimpleEnum
     end
   end
 end
-
-SimpleEnum.register_generator :multiple, SimpleEnum::Multiple::Extension

@@ -71,9 +71,19 @@ module SimpleEnum
                 end.to_sql
                 connection.send(:insert, insert_sql)
               end
+
+              instance_variable_set(:"@#{source}_was", current_cds)
+            end
+
+            define_method :"clear_#{source}!" do
+              delete_sql = table.where(table[foreign_key].eq(self.id))
+                .compile_delete
+                .to_sql
+              connection.send(:delete, delete_sql)
             end
 
             after_save :"update_#{source}!"
+            after_destroy :"clear_#{source}!"
           end
         end
 

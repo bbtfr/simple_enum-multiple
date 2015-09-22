@@ -13,6 +13,8 @@ module ActiveRecordSupport
       t.column :name, :string
       t.column :gender_cd, :integer
       t.column :favorite_cds, :integer
+      t.column :bitwise_cds, :integer
+      t.column :text_cds, :text
     end
     ActiveRecordSupport.connection.create_join_table :dummies, :favorites, force: true
   end
