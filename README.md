@@ -1,5 +1,8 @@
 # SimpleEnum::Multiple
 
+[![Travis](https://img.shields.io/travis/bbtfr/simple_enum-multiple.svg)](https://travis-ci.org/bbtfr/simple_enum-multiple) 
+[![Gem](https://img.shields.io/gem/v/simple_enum-multiple.svg)](https://rubygems.org/gems/simple_enum-multiple)
+
 SimpleEnum::Multiple is extension of SimpleEnum, which brings multi-select enum support to SimpleEnum.
 
 ## ActiveRecord Quick start
