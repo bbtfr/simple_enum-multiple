@@ -36,7 +36,8 @@ describe SimpleEnum::Multiple::Accessors::MultipleAccessor, active_record: true 
 
       context '#favorites?' do
         it 'delegates to accessor' do
-          expect(subject.favorites?).to be_truthy
+          subject.favorites = nil
+          expect(subject.favorites?).to be_falsey
         end
       end
     end

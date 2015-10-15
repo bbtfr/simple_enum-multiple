@@ -16,7 +16,7 @@ end
 
 Then create the required `users_favorites` table using migrations:
 ```ruby
-class AddfavoritesColumnToUser < ActiveRecord::Migration
+class AddFavoritesColumnToUser < ActiveRecord::Migration
   def change
     create_join_table :users, :favorites
   end

@@ -25,7 +25,7 @@ module SimpleEnum
       end
 
       alias_method :to_a, :proxy
-      delegate :inspect, :to_s, :==, :each, to: :proxy
+      delegate :inspect, :to_s, :==, :each, :join, to: :proxy
 
     end
   end
