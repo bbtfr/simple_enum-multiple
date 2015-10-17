@@ -17,8 +17,6 @@ module SimpleEnum
           foreign_key = self.foreign_key = klass_table_name.singularize.foreign_key
           remote_key = self.remote_key = name.singularize.foreign_key
 
-          connection = ActiveRecord::Base.connection
-
           klass.class_eval do
             attr_accessor source
 
@@ -33,7 +31,7 @@ module SimpleEnum
               sql = table.where(table[foreign_key].eq(self.id))
                 .project(table[remote_key])
                 .to_sql
-              original_cds = connection.send(:select, sql).rows.map(&:first).map(&:to_i)
+              original_cds = ActiveRecord::Base.connection.send(:select, sql).rows.map(&:first).map(&:to_i)
               instance_variable_set(:"@#{source}_was", original_cds)
             end
 
@@ -54,7 +52,7 @@ module SimpleEnum
                   .where(table[remote_key].in(original_cds - current_cds))
                   .compile_delete
                   .to_sql
-                connection.send(:delete, delete_sql)
+                ActiveRecord::Base.connection.send(:delete, delete_sql)
               end
 
               # if any enum been added
@@ -69,7 +67,7 @@ module SimpleEnum
                   end.join(", ")
                   insert_manager.values = Arel::Nodes::SqlLiteral.new("VALUES #{values}")
                 end.to_sql
-                connection.send(:insert, insert_sql)
+                ActiveRecord::Base.connection.send(:insert, insert_sql)
               end
 
               instance_variable_set(:"@#{source}_was", current_cds)
@@ -79,7 +77,7 @@ module SimpleEnum
               delete_sql = table.where(table[foreign_key].eq(self.id))
                 .compile_delete
                 .to_sql
-              connection.send(:delete, delete_sql)
+              ActiveRecord::Base.connection.send(:delete, delete_sql)
             end
 
             after_save :"update_#{source}!"
