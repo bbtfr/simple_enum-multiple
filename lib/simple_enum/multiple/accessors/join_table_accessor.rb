@@ -18,33 +18,29 @@ module SimpleEnum
           remote_key = self.remote_key = name.singularize.foreign_key
 
           klass.class_eval do
-            attr_accessor source
+            define_attribute_method source
 
-            define_method :"#{source}_changed?" do
-              instance_variable_get(:"@#{source}") !=
-                instance_variable_get(:"@#{source}_was")
-            end
-
-            define_method :"#{source}_was" do
-              instance_variable = instance_variable_get(:"@#{source}_was")
+            define_method source do
+              instance_variable = instance_variable_get(:"@#{source}")
               return instance_variable if instance_variable
               sql = table.where(table[foreign_key].eq(self.id))
                 .project(table[remote_key])
                 .to_sql
               original_cds = ActiveRecord::Base.connection.send(:select, sql).rows.map(&:first).map(&:to_i)
-              instance_variable_set(:"@#{source}_was", original_cds)
+              instance_variable_set(:"@#{source}", original_cds)
             end
 
-            define_method source do
+            define_method :"#{source}=" do |current_cds|
               instance_variable = instance_variable_get(:"@#{source}")
-              return instance_variable if instance_variable
-              instance_variable_set(:"@#{source}", send(:"#{source}_was").dup)
+              send("#{source}_will_change!") unless current_cds == instance_variable
+              instance_variable_set(:"@#{source}", current_cds.select(&:present?).map(&:to_i))
             end
 
             define_method :"update_#{source}!" do
               return unless send(:"#{source}_changed?")
               original_cds = send(:"#{source}_was")
-              current_cds = send(source).select(&:present?).map(&:to_i)
+              current_cds = send(source)
+
 
               # if any enum been removed
               if (original_cds - current_cds).any?
