@@ -44,7 +44,7 @@ module SimpleEnum
             define_method :"update_#{source}!" do
               return unless send(:"#{source}_changed?")
               original_cds = send(:"#{source}_was")
-              current_cds = send(source).select(&:present?)
+              current_cds = send(source).select(&:present?).map(&:to_i)
 
               # if any enum been removed
               if (original_cds - current_cds).any?
