@@ -33,7 +33,7 @@ module SimpleEnum
               sql = table.where(table[foreign_key].eq(self.id))
                 .project(table[remote_key])
                 .to_sql
-              original_cds = connection.send(:select, sql).rows.map(&:first)
+              original_cds = connection.send(:select, sql).rows.map(&:first).map(&:to_i)
               instance_variable_set(:"@#{source}_was", original_cds)
             end
 
