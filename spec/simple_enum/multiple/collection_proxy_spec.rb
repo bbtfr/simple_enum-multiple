@@ -7,10 +7,17 @@ describe SimpleEnum::Multiple::CollectionProxy do
 
   subject { described_class.new(favorite_cds, accessor) }
 
+  it 'is considered as empty by default' do
+    expect(subject).to be_empty
+    expect(subject).to be_blank
+    expect(subject).to_not be_present
+  end
+
   context '#push' do
     it 'pushes 0, 1 to collection' do
       expect(subject.push(0, 1)).to eq [:iphone, :ipad]
       expect(favorite_cds).to eq [0, 1]
+      expect(subject).to_not be_empty
     end
 
     it 'pushes :iphone, :macbook to collection' do
